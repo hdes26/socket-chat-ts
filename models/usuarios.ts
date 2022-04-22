@@ -8,8 +8,8 @@ class Usuarios {
         this.personas = [];
     }
 
-    agregarPersona(id: string, nombre: string) {
-        let persona = { id, nombre };
+    agregarPersona(id: string, nombre: string, sala:string) {
+        let persona = { id, nombre,sala };
 
         this.personas.push(persona);
 
@@ -17,7 +17,7 @@ class Usuarios {
     }
 
     getPersona(id: string) {
-        let persona = this.personas.filter(persona => { persona.id === id })[0];
+        let persona = this.personas.filter(persona => persona.id === id)[0];
 
         return persona;
     }
@@ -26,8 +26,16 @@ class Usuarios {
         return this.personas;
     }
 
-    getPersonasPorSala(sala:any) {
-        //...
+    getPersonasPorSala(sala: any) {
+        let personasEnSala = this.personas.filter(persona=> persona.sala === sala);
+        return personasEnSala;
+    }
+    borrarPersona(id: string) {
+        let personBorrada = this.getPersona(id);
+
+        this.personas = this.personas.filter(persona => { return persona.id !== id });
+
+        return personBorrada;
     }
 
 }

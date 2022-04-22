@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const http_1 = require("http");
+const { socketController } = require('../socket/socketController');
 class Server {
     constructor() {
         this.apiPaths = {
@@ -12,8 +14,12 @@ class Server {
         };
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || '8000';
+        this.server = (0, http_1.createServer)(this.app);
+        this.io = require('socket.io')(this.server);
         //Metodos inciales
         this.middlewares();
+        //socket
+        this.sockets();
     }
     middlewares() {
         //CORS
@@ -23,8 +29,11 @@ class Server {
         //Carpeta publica
         this.app.use(express_1.default.static('public'));
     }
+    sockets() {
+        this.io.on('connection', (socket) => socketController(socket, this.io));
+    }
     listen() {
-        this.app.listen(this.port, () => {
+        this.server.listen(this.port, () => {
             console.log('Servidor corriendo en puerto ' + this.port);
         });
     }
