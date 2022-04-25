@@ -21,18 +21,22 @@ const socketController = async (socket = new Socket, io: any) => {
 
         socket.broadcast.to(data.sala).emit('listaPersona', Usuario.getPersonasPorSala(data.sala));
 
+        socket.broadcast.to(data.sala).emit('crearMensaje', crearMensaje('Administrador', `${data.nombre} se unió`));
+
         callback(Usuario.getPersonasPorSala(data.sala));
 
     });
 
-    socket.on('crearMensaje', (data:any)=>{
+    socket.on('crearMensaje', (data:any, callback:any)=>{
 
         let persona = Usuario.getPersona(socket.id);
 
         
         let mensaje = crearMensaje( persona.nombre, data.mensaje );
 
-        socket.broadcast.to(persona.sala).emit('crearMensaje', mensaje )
+        socket.broadcast.to(persona.sala).emit('crearMensaje', mensaje );
+
+        callback(mensaje)
     })
 
     socket.on('disconnect', () => {

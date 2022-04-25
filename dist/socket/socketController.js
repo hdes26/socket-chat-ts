@@ -28,12 +28,14 @@ const socketController = (socket = new Socket, io) => __awaiter(void 0, void 0, 
         socket.join(data.sala);
         Usuario.agregarPersona(socket.id, data.nombre, data.sala);
         socket.broadcast.to(data.sala).emit('listaPersona', Usuario.getPersonasPorSala(data.sala));
+        socket.broadcast.to(data.sala).emit('crearMensaje', crearMensaje('Administrador', `${data.nombre} se unió`));
         callback(Usuario.getPersonasPorSala(data.sala));
     });
-    socket.on('crearMensaje', (data) => {
+    socket.on('crearMensaje', (data, callback) => {
         let persona = Usuario.getPersona(socket.id);
         let mensaje = crearMensaje(persona.nombre, data.mensaje);
         socket.broadcast.to(persona.sala).emit('crearMensaje', mensaje);
+        callback(mensaje);
     });
     socket.on('disconnect', () => {
         let personaBorrada = Usuario.borrarPersona(socket.id);
